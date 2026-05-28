@@ -1,0 +1,17 @@
+project_bucket_name = "weather-classification-emr-studio-your-random-suffix"
+
+subnet_id = "subnet-xxxxxxxxxxxxxxxxx"
+
+master_security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+slave_security_group_id  = "sg-xxxxxxxxxxxxxxxxx"
+
+master_instance_type = "m5.xlarge"
+core_instance_type   = "m5.xlarge"
+core_instance_count  = 1
+
+ec2_key_pair = "vockey"
+
+emr_service_role          = "EMR_DefaultRole"
+emr_ec2_instance_profile  = "EMR_EC2_DefaultRole"
+
+idle_timeout_seconds = 3600
