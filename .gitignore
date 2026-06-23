@@ -236,3 +236,12 @@ override.tf.json
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
+
+data/sample_raw/
+data/sample_classified/
+results/*.csv
+results/*.json
+results/*.png
+
+!data/.gitkeep
+!results/.gitkeep
