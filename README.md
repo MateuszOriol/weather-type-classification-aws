@@ -10,37 +10,38 @@ The goal is to convert raw weather measurements into readable weather categories
 
 ### 1.1 Required configuration
 
-The project needs access to the weather REST API.
-
-Create a local `.env` file or set environment variables manually:
-
-```env
-WEATHER_API_BASE_URL=https://YOUR_API_URL_HERE
-WEATHER_API_TOKEN=YOUR_TOKEN_HERE
-STATION_ID=GDN_01
-```
-
-Do **not** commit `.env` to GitHub.
-
-For PowerShell:
-
-```powershell
-$env:WEATHER_API_BASE_URL="https://YOUR_API_URL_HERE"
-$env:WEATHER_API_TOKEN="YOUR_TOKEN_HERE"
-$env:STATION_ID="GDN_01"
-$env:PYTHONPATH="."
-```
-
-For Jupyter notebooks, set the token manually only during execution:
+The PySpark notebook requires two API values:
 
 ```python
-import os
-
-os.environ["WEATHER_API_BASE_URL"] = "https://YOUR_API_URL_HERE"
-os.environ["WEATHER_API_TOKEN"] = "YOUR_TOKEN_HERE"
+BASE_URL = ""
+TOKEN = ""
 ```
 
-Before pushing notebooks to GitHub, remove real token values from the notebook.
+Before running the notebook, replace them locally with the weather API base URL and token:
+
+```python
+BASE_URL = "https://YOUR_API_URL_HERE"
+TOKEN = "YOUR_TOKEN_HERE"
+```
+
+The selected weather station and number of records are configured as:
+
+```python
+STATION_ID = "GDN_01"
+LIMIT = 500
+```
+
+Do **not** commit a real API token to GitHub.
+
+Before committing or pushing the notebook, remove the real values and leave placeholders:
+
+```python
+BASE_URL = ""
+TOKEN = ""
+```
+
+This prevents exposing the API token in the repository.
+
 
 ---
 
