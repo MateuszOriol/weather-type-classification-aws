@@ -42,7 +42,6 @@ TOKEN = ""
 
 This prevents exposing the API token in the repository.
 
-
 ---
 
 ### 1.2 Local test
@@ -54,6 +53,8 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
 pip install -r requirements.txt
+
+$env:WEATHER_API_TOKEN="YOUR_TOKEN_HERE"
 $env:PYTHONPATH="."
 
 python .\scripts\test_local_classification.py
@@ -105,7 +106,7 @@ After that, run:
 notebooks/weather_visualization.ipynb
 ```
 
-This notebook reads the saved S3 results and creates charts.
+This notebook reads the saved S3 results and creates the final chart.
 
 ---
 
@@ -148,12 +149,12 @@ weather-type-classification-aws/
 
 Main folders:
 
-- `src/` contains reusable Python code for API access and classification.
-- `scripts/` contains local test scripts.
-- `notebooks/` contains the EMR PySpark notebook and Python visualization notebook.
-- `terraform/` creates AWS resources.
-- `images/` contains screenshots used in the report.
-- `results/` and `data/` are local generated outputs and should usually not be committed.
+* `src/` contains reusable Python code for API access and classification.
+* `scripts/` contains local test scripts.
+* `notebooks/` contains the EMR PySpark notebook and Python visualization notebook.
+* `terraform/` creates AWS resources.
+* `images/` contains screenshots used in the report.
+* `results/` and `data/` are local generated outputs and should usually not be committed.
 
 ---
 
@@ -172,20 +173,22 @@ Amazon S3
         ↓
 Python visualization notebook
         ↓
-Final charts
+Final chart
 ```
 
-The project separates cloud processing from visualization. The main data processing is performed with PySpark on EMR, while charts are created in a separate Python notebook from S3 outputs.
+The project separates cloud processing from visualization. The main data processing is performed with PySpark on EMR, while the final chart is created in a separate Python notebook from S3 outputs.
 
 ---
 
 ## 4. AWS Infrastructure
 
-Terraform was used to create the project infrastructure:
+Terraform was used to create the project infrastructure for each AWS Academy lab session.
 
-- S3 bucket for logs and outputs,
-- EMR cluster for PySpark processing,
-- S3 public access block.
+Terraform creates:
+
+* one S3 bucket for logs and outputs,
+* one EMR cluster for PySpark processing,
+* one S3 public access block.
 
 Project bucket used during the run:
 
@@ -202,6 +205,10 @@ results/
 ```
 
 ![S3 output folders](images/s3_output.png)
+
+The `logs/` folder stores EMR logs.
+The `processed/` folder stores the classified dataset.
+The `results/` folder stores aggregated weather type counts.
 
 ---
 
@@ -242,7 +249,7 @@ The batch endpoint returned weather records containing timestamp, station ID, te
 
 The API records were converted into a Spark DataFrame.
 
-An explicit schema was used because some numeric values, especially `rain_mm`, could appear as both integer-like and floating-point values.
+An explicit schema was used because some numeric values, especially `rain_mm`, could appear as both integer-like and floating-point values. Without an explicit schema, Spark could have problems inferring a consistent type.
 
 ![Spark DataFrame schema](images/schema.png)
 
@@ -346,6 +353,8 @@ Example output:
 
 ![Classified dataset](images/klasyfikacja.png)
 
+The final classified record contains the original weather data plus the selected weather category.
+
 ---
 
 ## 10. Aggregated Results
@@ -374,6 +383,8 @@ storm-risk     3
 
 ![Weather type counts](images/counts.png)
 
+The aggregated result shows how many records were assigned to each weather category.
+
 ---
 
 ## 11. Saving Outputs to S3
@@ -396,6 +407,8 @@ Code used:
 classified_df.write.mode("overwrite").parquet(classified_output_path)
 counts_df.write.mode("overwrite").csv(counts_output_path, header=True)
 ```
+
+Parquet was used for the classified dataset because it is efficient for analytical data. CSV was used for the aggregated counts because it is simple to read in the visualization notebook.
 
 ---
 
@@ -473,13 +486,13 @@ This project demonstrates a complete AWS-based weather classification pipeline.
 
 Technologies used:
 
-- AWS EMR,
-- PySpark,
-- EMR Studio,
-- Amazon S3,
-- Terraform,
-- Python,
-- Matplotlib.
+* AWS EMR,
+* PySpark,
+* EMR Studio,
+* Amazon S3,
+* Terraform,
+* Python,
+* Matplotlib.
 
 Final workflow:
 
@@ -501,11 +514,11 @@ The project is intentionally small, but the architecture can scale to larger wea
 
 Possible improvements:
 
-- process more stations,
-- increase the data size,
-- improve classification thresholds,
-- store API token in AWS Secrets Manager or Parameter Store,
-- add GitHub Actions with GitHub Secrets,
-- compare rule-based classification with machine learning,
-- create a dashboard instead of static charts,
-- use a smaller or single-node EMR cluster for cost optimization.
+* process more stations,
+* increase the data size,
+* improve classification thresholds,
+* store API token in AWS Secrets Manager or Parameter Store,
+* add GitHub Actions with GitHub Secrets,
+* compare rule-based classification with machine learning,
+* create a dashboard instead of a static chart,
+* use a smaller or single-node EMR cluster for cost optimization.
